@@ -64,7 +64,7 @@ fun ProcessMeter() {
                     )
                 }
                 .size(100.dp)){
-            Text(text = "100", style = TextStyle(Color.White, fontSize = 20.sp, fontFamily = FontFamily.Monospace))
+            Text(text = "800", style = TextStyle(Color.White, fontSize = 20.sp, fontFamily = FontFamily.Monospace))
         }
         Column(modifier = Modifier
             .drawBehind {
