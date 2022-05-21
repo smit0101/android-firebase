@@ -45,11 +45,13 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ProcessMeter() {
-    Column( verticalArrangement = Arrangement.SpaceAround,
+    Column(
+        verticalArrangement = Arrangement.SpaceAround,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .size(600.dp)
-            .background(brush = Brush.verticalGradient(listOf(Color.Blue, Color.Cyan)))) {
+            .background(brush = Brush.verticalGradient(listOf(Color.Blue, Color.Cyan)))
+    ) {
         Column(verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -63,8 +65,11 @@ fun ProcessMeter() {
                         style = Stroke(width = 60f, cap = StrokeCap.Round),
                     )
                 }
-                .size(100.dp)){
-            Text(text = "800", style = TextStyle(Color.White, fontSize = 20.sp, fontFamily = FontFamily.Monospace))
+                .size(100.dp)) {
+            Text(
+                text = "800",
+                style = TextStyle(Color.White, fontSize = 20.sp, fontFamily = FontFamily.Monospace)
+            )
         }
         Column(modifier = Modifier
             .drawBehind {
@@ -77,7 +82,7 @@ fun ProcessMeter() {
                     style = Stroke(width = 60f, cap = StrokeCap.Round),
                 )
             }
-            .size(100.dp)){}
+            .size(100.dp)) {}
     }
 }
 
