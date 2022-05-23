@@ -3,15 +3,19 @@ package com.smit
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -24,7 +28,17 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.smit.model.ApiResult
 import com.smit.ui.theme.AndroidfirebaseTheme
+import io.ktor.client.*
+import io.ktor.client.call.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.Json
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,10 +50,84 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    ProcessMeter()
+                      //ProcessMeter()
+                     //GridTest()
+                    //AnimateApp()
+                    val client = HttpClient (CIO){
+                        install(ContentNegotiation){
+                            json(Json {
+                                prettyPrint = true
+                                isLenient = true
+                                ignoreUnknownKeys = true
+                            })
+                        }
+                    }
+                    var text by remember {
+                        mutableStateOf("")
+                    }
+                        runBlocking {
+                            val response:ApiResult = client.get("https://instagram47.p.rapidapi.com/search?") {
+                                header(
+                                    key = "X-RapidAPI-Host",
+                                    value = "instagram47.p.rapidapi.com"
+                                )
+                                header(
+                                    key = "X-RapidAPI-Key",
+                                    value = "b24b748452mshea7538628fc5d80p111264jsn14da7a60bb71"
+                                )
+                                parameter(key = "search", "smit.0110")
+                            }.body()
+                            text = response.status ?: ""
+                        }
+                    Text(text = text)
+                    
+
                 }
             }
         }
+    }
+}
+
+
+
+@Composable
+fun AnimateApp(){
+    val color = remember{
+        Animatable(Color.Black)
+    }
+    val textColor = remember {
+        Animatable(Color.White)
+    }
+    LaunchedEffect(key1 = color ){
+         launch {
+             color.animateTo(Color.White, animationSpec = infiniteRepeatable(animation = tween(6000, easing = FastOutSlowInEasing)))
+            // textColor.animateTo(Color.Black, animationSpec = tween(6000, easing = FastOutSlowInEasing) )
+         }
+        launch {
+            textColor.animateTo(Color.Black, animationSpec = infiniteRepeatable(animation = tween(6000, easing = FastOutSlowInEasing)))
+        }
+    }
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .background(color.value)) {
+        Text(text = "Hey how are ypu.", style = TextStyle(fontSize = 30.sp, color = textColor.value))
+    }
+}
+
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun GridTest(){
+    LazyVerticalGrid(cells = GridCells.Adaptive(128.dp),
+        contentPadding = PaddingValues(all = 20.dp),
+        modifier = Modifier
+            .background(Color.Black)){
+            items(30){
+                Box(modifier = Modifier
+                    .padding(4.dp)
+                    .size(50.dp)
+                    .background(Color.Blue))
+            }
     }
 }
 
@@ -57,13 +145,23 @@ fun ProcessMeter() {
             modifier = Modifier
                 .drawBehind {
                     drawArc(
-                        brush = Brush.verticalGradient(listOf(Color.Black, Color.Red)),
-                        sweepAngle = 280f,
+                        color = Color.White,
+                        sweepAngle = 360f,
                         startAngle = -90f,
                         useCenter = false,
                         //    size = size/1.25f,
                         style = Stroke(width = 60f, cap = StrokeCap.Round),
                     )
+                    drawArc(
+                        brush = Brush.verticalGradient(listOf(Color.Black, Color.Red)),
+                        sweepAngle = 280f,
+                        startAngle = -90f,
+                        useCenter = false,
+                        //    size = size/1.25f,
+                        alpha = 0.7f,
+                        style = Stroke(width = 60f, cap = StrokeCap.Round),
+                    )
+
                 }
                 .size(100.dp)) {
             Text(
