@@ -63,48 +63,7 @@ class MainActivity : ComponentActivity() {
                       //ProcessMeter()
                      //GridTest()
                     //AnimateApp()
-                    val client = HttpClient (CIO){
-                        install(ContentNegotiation){
-                            json(Json {
-                                prettyPrint = true
-                                isLenient = true
-                                ignoreUnknownKeys = true
-                            })
-                        }
-                    }
-                    var users = remember {
-                        mutableListOf<IGUsers>()
-                    }
-                        runBlocking {
-                            val response:ApiResult = client.get("https://instagram47.p.rapidapi.com/search?") {
-                                header(
-                                    key = "X-RapidAPI-Host",
-                                    value = "instagram47.p.rapidapi.com"
-                                )
-                                header(
-                                    key = "X-RapidAPI-Key",
-                                    value = "b24b748452mshea7538628fc5d80p111264jsn14da7a60bb71"
-                                )
-                                parameter(key = "search", "smit.0110")
-                            }.body()
-                            users = response.body?.users ?: mutableListOf()
-                        }
-
-                    LazyColumn (horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceAround,
-                    contentPadding = PaddingValues(top = 10.dp, bottom = 10.dp)){
-
-                        items(users) {
-
-                               // val constraintsScope = rememberCoroutineScope()
-                                Text(text = it.user?.username ?: "no name")
-                                Image(painter = rememberAsyncImagePainter(it.user?.profilePicUrl ?: ""), contentDescription = "",
-                                modifier = Modifier.size(100.dp).clip(CircleShape),
-                                contentScale = ContentScale.Crop)
-
-
-                        }
-                    }
+                    ApiTesting()
 
                 }
             }
@@ -113,6 +72,55 @@ class MainActivity : ComponentActivity() {
 }
 
 
+@Composable
+fun ApiTesting(){
+    val client = HttpClient (CIO){
+        install(ContentNegotiation){
+            json(Json {
+                prettyPrint = true
+                isLenient = true
+                ignoreUnknownKeys = true
+            })
+        }
+    }
+    var users = remember {
+        mutableListOf<IGUsers>()
+    }
+    runBlocking {
+        val response:ApiResult = client.get("https://instagram47.p.rapidapi.com/search?") {
+            header(
+                key = "X-RapidAPI-Host",
+                value = "instagram47.p.rapidapi.com"
+            )
+            header(
+                key = "X-RapidAPI-Key",
+                value = "b24b748452mshea7538628fc5d80p111264jsn14da7a60bb71"
+            )
+            parameter(key = "search", "smit.0110")
+        }.body()
+        users = response.body?.users ?: mutableListOf()
+    }
+
+    LazyColumn (horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceAround,
+        contentPadding = PaddingValues(top = 50.dp, bottom = 10.dp),
+        modifier = Modifier.background(Color.Cyan)){
+
+        items(users) {
+
+            // val constraintsScope = rememberCoroutineScope()
+            Text(text = it.user?.username ?: "no name")
+            Image(painter = rememberAsyncImagePainter(it.user?.profilePicUrl ?: ""), contentDescription = "",
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop)
+
+
+        }
+    }
+
+}
 
 @Composable
 fun AnimateApp(){
