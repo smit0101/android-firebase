@@ -8,27 +8,37 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.smit.model.ApiResult
+import com.smit.model.IGUsers
 import com.smit.ui.theme.AndroidfirebaseTheme
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -62,8 +72,8 @@ class MainActivity : ComponentActivity() {
                             })
                         }
                     }
-                    var text by remember {
-                        mutableStateOf("")
+                    var users = remember {
+                        mutableListOf<IGUsers>()
                     }
                         runBlocking {
                             val response:ApiResult = client.get("https://instagram47.p.rapidapi.com/search?") {
@@ -77,10 +87,24 @@ class MainActivity : ComponentActivity() {
                                 )
                                 parameter(key = "search", "smit.0110")
                             }.body()
-                            text = response.status ?: ""
+                            users = response.body?.users ?: mutableListOf()
                         }
-                    Text(text = text)
-                    
+
+                    LazyColumn (horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceAround,
+                    contentPadding = PaddingValues(top = 10.dp, bottom = 10.dp)){
+
+                        items(users) {
+
+                               // val constraintsScope = rememberCoroutineScope()
+                                Text(text = it.user?.username ?: "no name")
+                                Image(painter = rememberAsyncImagePainter(it.user?.profilePicUrl ?: ""), contentDescription = "",
+                                modifier = Modifier.size(100.dp).clip(CircleShape),
+                                contentScale = ContentScale.Crop)
+
+
+                        }
+                    }
 
                 }
             }
