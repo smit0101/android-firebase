@@ -12,7 +12,8 @@ data class Body(
     val places: Places? = null,
     val status: String? = null,
     @SerialName("clear_client_cache") val clearClientCache: String? = null,
-    val hashtags:HashTag? =  null,
+    //
+    val hashtags:ArrayList<HashTags>? =  null,
     @SerialName("rank_token")
     val rankToken: String? = null,
     @SerialName("has_more")
@@ -24,14 +25,28 @@ data class Places(val position:Int? = null , val place:Place? = null)
 
 @Serializable
 data class Place(
-    @SerialName("media_bundles") val mediaBundles:MediaBundles? = null,
+    //
+    @SerialName("media_bundles") val mediaBundles:String? = null,
     val title: String? = null,
     val location: Location? = null,
     val subtitle: String? = null
 )
 
 @Serializable
-class HashTag
+data class HashTags( val hashTag: HashTag? = null, val position: Int? =null)
+@Serializable
+class HashTag(
+    @SerialName("search_result_subtitle")
+    val searchResultSubtitle:String? = null,
+    val id:Long? = null,
+    @SerialName("media_count")
+    val mediaCount:Long? = null,
+    @SerialName("profile_pic_url")
+    val profilePicUrl: String? = null,
+    @SerialName("use_default_avatar")
+    val useDefaultAvatar:Boolean
+)
+
 @Serializable
 class MediaBundles
 
@@ -80,7 +95,9 @@ data class IGUser(
 class AccountBage
 
 @Serializable
-data class GrowthFrictionInfo(val interventions:Intervention? = null,
+data class GrowthFrictionInfo(
+                        //
+                        val interventions:Intervention? = null,
                             @SerialName("has_active_interventions") val hashActiveInterventions:Boolean
                               )
 

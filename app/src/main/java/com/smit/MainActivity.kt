@@ -16,12 +16,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,6 +45,7 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -83,43 +83,69 @@ fun ApiTesting(){
             })
         }
     }
+
     var users = remember {
         mutableListOf<IGUsers>()
     }
-    runBlocking {
-        val response:ApiResult = client.get("https://instagram47.p.rapidapi.com/search?") {
-            header(
-                key = "X-RapidAPI-Host",
-                value = "instagram47.p.rapidapi.com"
-            )
-            header(
-                key = "X-RapidAPI-Key",
-                value = "b24b748452mshea7538628fc5d80p111264jsn14da7a60bb71"
-            )
-            parameter(key = "search", "smit.0110")
-        }.body()
-        users = response.body?.users ?: mutableListOf()
+    var searcgText by remember {
+        mutableStateOf("kendralust")
     }
-
-    LazyColumn (horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceAround,
-        contentPadding = PaddingValues(top = 50.dp, bottom = 10.dp),
-        modifier = Modifier.background(Color.Cyan)){
-
-        items(users) {
-
-            // val constraintsScope = rememberCoroutineScope()
-            Text(text = it.user?.username ?: "no name")
-            Image(painter = rememberAsyncImagePainter(it.user?.profilePicUrl ?: ""), contentDescription = "",
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop)
+    val constraintsScope = rememberCoroutineScope()
+    Column() {
 
 
+        BasicTextField(value = searcgText, onValueChange = { searcgText = it })
+        LaunchedEffect(key1 = searcgText ){
+        runBlocking {
+            constraintsScope.launch {
+                delay(4000)
+                val response: ApiResult = client.get("https://instagram47.p.rapidapi.com/search?") {
+                    header(
+                        key = "X-RapidAPI-Host",
+                        value = "instagram47.p.rapidapi.com"
+                    )
+                    header(
+                        key = "X-RapidAPI-Key",
+                        value = "b24b748452mshea7538628fc5d80p111264jsn14da7a60bb71"
+                    )
+                    parameter(key = "search", searcgText)
+                }.body()
+                users = response.body?.users ?: mutableListOf()
+            }
+        }
+        }
+
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(30.dp),
+            contentPadding = PaddingValues(top = 50.dp, bottom = 10.dp),
+            modifier = Modifier.background(Color.Black)
+        ) {
+
+            items(users) {
+
+                // val constraintsScope = rememberCoroutineScope()
+                Text(
+                    text = it.user?.username ?: "no name",
+                    style = TextStyle(
+                        Color.White,
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily.Monospace
+                    )
+                )
+                Image(
+                    painter = rememberAsyncImagePainter(it.user?.profilePicUrl ?: ""),
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
+                )
+
+
+            }
         }
     }
-
 }
 
 @Composable
