@@ -10,6 +10,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyColumn
@@ -35,6 +36,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.smit.model.ApiResult
 import com.smit.model.IGUsers
@@ -45,7 +50,6 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -53,6 +57,7 @@ import kotlinx.serialization.json.Json
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lateinit var navController:NavHostController
         setContent {
             AndroidfirebaseTheme {
                 // A surface container using the 'background' color from the theme
@@ -60,15 +65,55 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                      //ProcessMeter()
-                     //GridTest()
-                    //AnimateApp()
-                    ApiTesting()
+                    navController = rememberNavController()
+                    NavigationGraph(navController = navController)
+
 
                 }
             }
         }
     }
+}
+
+@Composable
+fun NavigationGraph(navController:NavHostController){
+    NavHost(navController = navController, startDestination = HomeScreen.route){
+            composable(route = HomeScreen.route){
+                HomeScreen(navController=navController)
+            }
+            composable(route=ScreenA.route){
+                ScreenA()
+            }
+    }
+
+}
+
+
+
+sealed interface Screen{
+    val route:String
+}
+object HomeScreen:Screen{
+    override val route: String
+        get() = "homeScreen"
+}
+object ScreenA:Screen{
+    override val route: String
+        get() = "screenA"
+}
+
+
+@Composable
+fun HomeScreen(navController: NavHostController){
+            Text(text = "Home", style = TextStyle(color = Color.Black, fontSize = 40.sp), modifier = Modifier.clickable {
+                navController.navigate(ScreenA.route)
+            })
+
+}
+
+@Composable
+fun ScreenA(){
+    Text(text = "ScreenA", style = TextStyle(color = Color.Black, fontSize = 40.sp))
 }
 
 
@@ -90,15 +135,10 @@ fun ApiTesting(){
     var searcgText by remember {
         mutableStateOf("kendralust")
     }
-    val constraintsScope = rememberCoroutineScope()
     Column() {
-
-
         BasicTextField(value = searcgText, onValueChange = { searcgText = it })
-        LaunchedEffect(key1 = searcgText ){
         runBlocking {
-            constraintsScope.launch {
-                delay(4000)
+              //  delay(4000)
                 val response: ApiResult = client.get("https://instagram47.p.rapidapi.com/search?") {
                     header(
                         key = "X-RapidAPI-Host",
@@ -111,9 +151,8 @@ fun ApiTesting(){
                     parameter(key = "search", searcgText)
                 }.body()
                 users = response.body?.users ?: mutableListOf()
-            }
         }
-        }
+
 
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -123,7 +162,6 @@ fun ApiTesting(){
         ) {
 
             items(users) {
-
                 // val constraintsScope = rememberCoroutineScope()
                 Text(
                     text = it.user?.username ?: "no name",
@@ -141,8 +179,6 @@ fun ApiTesting(){
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop
                 )
-
-
             }
         }
     }
