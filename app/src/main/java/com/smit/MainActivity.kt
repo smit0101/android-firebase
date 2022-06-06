@@ -37,9 +37,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import coil.compose.rememberAsyncImagePainter
 import com.smit.model.ApiResult
 import com.smit.model.IGUsers
@@ -81,8 +83,11 @@ fun NavigationGraph(navController:NavHostController){
             composable(route = HomeScreen.route){
                 HomeScreen(navController=navController)
             }
-            composable(route=ScreenA.route){
-                ScreenA()
+            composable(route=ScreenA.route,
+            arguments = listOf(navArgument(name = "id"){
+                type = NavType.IntType
+            })){
+                ScreenA(it.arguments?.getInt("id") ?: -1)
             }
     }
 
@@ -99,21 +104,21 @@ object HomeScreen:Screen{
 }
 object ScreenA:Screen{
     override val route: String
-        get() = "screenA"
+        get() = "screenA/{id}"
 }
 
 
 @Composable
 fun HomeScreen(navController: NavHostController){
             Text(text = "Home", style = TextStyle(color = Color.Black, fontSize = 40.sp), modifier = Modifier.clickable {
-                navController.navigate(ScreenA.route)
+                navController.navigate("screenA/"+9)
             })
 
 }
 
 @Composable
-fun ScreenA(){
-    Text(text = "ScreenA", style = TextStyle(color = Color.Black, fontSize = 40.sp))
+fun ScreenA(value:Int){
+    Text(text = value.toString() , style = TextStyle(color = Color.Black, fontSize = 40.sp))
 }
 
 
