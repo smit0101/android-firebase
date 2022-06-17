@@ -70,11 +70,11 @@ data class IGUsers(val user:IGUser? = null, val position: Int? = null)
 @Serializable
 data class IGUser(
     @SerialName("is_private") val isPrivate: Boolean,
-    @SerialName("has_primary_country_in_profile") val hasPrimaryCountryInProfile:Boolean,
+    @SerialName("has_primary_country_in_profile") val hasPrimaryCountryInProfile:Boolean? = null,
     @SerialName("full_name") val fullName:String? = null,
     @SerialName("growth_friction_info") val growthFrictionInfo:GrowthFrictionInfo? = null,
     @SerialName("has_highlight_reels") val hasHighlightReels:Boolean,
-    @SerialName("has_primary_country_in_feed") val hasPrimaryCountryInFeed:Boolean,
+    @SerialName("has_primary_country_in_feed") val hasPrimaryCountryInFeed:Boolean? = null,
     @SerialName("should_show_category") val shouldShowCategory:Boolean,
     @SerialName("transparency_product_enabled") val transparencyProductEnabled:Boolean,
     @SerialName("friendship_status") val friendshipStatus:FriendshipStatus? = null,

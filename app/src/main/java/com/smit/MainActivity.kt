@@ -40,7 +40,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import coil.compose.rememberAsyncImagePainter
 import com.smit.model.ApiResult
@@ -67,8 +66,10 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    navController = rememberNavController()
-                    NavigationGraph(navController = navController)
+//                    navController = rememberNavController()
+//                    NavigationGraph(navController = navController)
+                    ApiTesting()
+
 
 
                 }
@@ -137,11 +138,11 @@ fun ApiTesting(){
     var users = remember {
         mutableListOf<IGUsers>()
     }
-    var searcgText by remember {
-        mutableStateOf("kendralust")
+    var searchText by remember {
+        mutableStateOf("brandilove")
     }
     Column() {
-        BasicTextField(value = searcgText, onValueChange = { searcgText = it })
+        BasicTextField(value = searchText, onValueChange = { searchText = it })
         runBlocking {
               //  delay(4000)
                 val response: ApiResult = client.get("https://instagram47.p.rapidapi.com/search?") {
@@ -153,7 +154,7 @@ fun ApiTesting(){
                         key = "X-RapidAPI-Key",
                         value = "b24b748452mshea7538628fc5d80p111264jsn14da7a60bb71"
                     )
-                    parameter(key = "search", searcgText)
+                    parameter(key = "search", searchText)
                 }.body()
                 users = response.body?.users ?: mutableListOf()
         }
