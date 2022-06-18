@@ -58,7 +58,7 @@ import kotlinx.serialization.json.Json
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        lateinit var navController:NavHostController
+        lateinit var navController: NavHostController
         setContent {
             AndroidfirebaseTheme {
                 // A surface container using the 'background' color from the theme
@@ -71,7 +71,6 @@ class MainActivity : ComponentActivity() {
                     ApiTesting()
 
 
-
                 }
             }
         }
@@ -79,47 +78,53 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun NavigationGraph(navController:NavHostController){
-    NavHost(navController = navController, startDestination = HomeScreen.route){
-            composable(route = HomeScreen.route){
-                HomeScreen(navController=navController)
-            }
-            composable(route=ScreenA.route,
-            arguments = listOf(navArgument(name = "id"){
+fun NavigationGraph(navController: NavHostController) {
+    NavHost(navController = navController, startDestination = HomeScreen.route) {
+        composable(route = HomeScreen.route) {
+            HomeScreen(navController = navController)
+        }
+        composable(
+            route = ScreenA.route,
+            arguments = listOf(navArgument(name = "id") {
                 type = NavType.IntType
-            })){
-                ScreenA(it.arguments?.getInt("id") ?: -1)
-            }
+            })
+        ) {
+            ScreenA(it.arguments?.getInt("id") ?: -1)
+        }
     }
 
 }
 
 
-
-sealed interface Screen{
-    val route:String
+sealed interface Screen {
+    val route: String
 }
-object HomeScreen:Screen{
+
+object HomeScreen : Screen {
     override val route: String
         get() = "homeScreen"
 }
-object ScreenA:Screen{
+
+object ScreenA : Screen {
     override val route: String
         get() = "screenA/{id}"
 }
 
 
 @Composable
-fun HomeScreen(navController: NavHostController){
-            Text(text = "Home", style = TextStyle(color = Color.Black, fontSize = 40.sp), modifier = Modifier.clickable {
-                navController.navigate("screenA/"+9)
-            })
+fun HomeScreen(navController: NavHostController) {
+    Text(
+        text = "Home",
+        style = TextStyle(color = Color.Black, fontSize = 40.sp),
+        modifier = Modifier.clickable {
+            navController.navigate("screenA/" + 9)
+        })
 
 }
 
 @Composable
-fun ScreenA(value:Int){
-    Text(text = value.toString() , style = TextStyle(color = Color.Black, fontSize = 40.sp))
+fun ScreenA(value: Int) {
+    Text(text = value.toString(), style = TextStyle(color = Color.Black, fontSize = 40.sp))
 }
 
 
@@ -139,24 +144,24 @@ fun ApiTesting(){
         mutableListOf<IGUsers>()
     }
     var searchText by remember {
-        mutableStateOf("brandilove")
+        mutableStateOf("miamalkova")
     }
     Column() {
         BasicTextField(value = searchText, onValueChange = { searchText = it })
         runBlocking {
-              //  delay(4000)
-                val response: ApiResult = client.get("https://instagram47.p.rapidapi.com/search?") {
-                    header(
-                        key = "X-RapidAPI-Host",
-                        value = "instagram47.p.rapidapi.com"
-                    )
-                    header(
-                        key = "X-RapidAPI-Key",
-                        value = "b24b748452mshea7538628fc5d80p111264jsn14da7a60bb71"
-                    )
-                    parameter(key = "search", searchText)
-                }.body()
-                users = response.body?.users ?: mutableListOf()
+            //  delay(4000)
+            val response: ApiResult = client.get("https://instagram47.p.rapidapi.com/search?") {
+                header(
+                    key = "X-RapidAPI-Host",
+                    value = "instagram47.p.rapidapi.com"
+                )
+                header(
+                    key = "X-RapidAPI-Key",
+                    value = "b24b748452mshea7538628fc5d80p111264jsn14da7a60bb71"
+                )
+                parameter(key = "search", searchText)
+            }.body()
+            users = response.body?.users ?: mutableListOf()
         }
 
 
@@ -190,44 +195,70 @@ fun ApiTesting(){
     }
 }
 
+
 @Composable
-fun AnimateApp(){
-    val color = remember{
+fun AnimateApp() {
+    val color = remember {
         Animatable(Color.Black)
     }
     val textColor = remember {
         Animatable(Color.White)
     }
-    LaunchedEffect(key1 = color ){
-         launch {
-             color.animateTo(Color.White, animationSpec = infiniteRepeatable(animation = tween(6000, easing = FastOutSlowInEasing)))
-            // textColor.animateTo(Color.Black, animationSpec = tween(6000, easing = FastOutSlowInEasing) )
-         }
+    LaunchedEffect(key1 = color) {
         launch {
-            textColor.animateTo(Color.Black, animationSpec = infiniteRepeatable(animation = tween(6000, easing = FastOutSlowInEasing)))
+            color.animateTo(
+                Color.White,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(
+                        6000,
+                        easing = FastOutSlowInEasing
+                    )
+                )
+            )
+            // textColor.animateTo(Color.Black, animationSpec = tween(6000, easing = FastOutSlowInEasing) )
+        }
+        launch {
+            textColor.animateTo(
+                Color.Black,
+                animationSpec = infiniteRepeatable(
+                    animation = tween(
+                        6000,
+                        easing = FastOutSlowInEasing
+                    )
+                )
+            )
         }
     }
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(color.value)) {
-        Text(text = "Hey how are ypu.", style = TextStyle(fontSize = 30.sp, color = textColor.value))
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color.value)
+    ) {
+        Text(
+            text = "Hey how are ypu.",
+            style = TextStyle(fontSize = 30.sp, color = textColor.value)
+        )
     }
 }
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun GridTest(){
-    LazyVerticalGrid(cells = GridCells.Adaptive(128.dp),
+fun GridTest() {
+    LazyVerticalGrid(
+        cells = GridCells.Adaptive(128.dp),
         contentPadding = PaddingValues(all = 20.dp),
         modifier = Modifier
-            .background(Color.Black)){
-            items(30){
-                Box(modifier = Modifier
+            .background(Color.Black)
+    ) {
+        items(30) {
+            Box(
+                modifier = Modifier
                     .padding(4.dp)
                     .size(50.dp)
-                    .background(Color.Blue))
-            }
+                    .background(Color.Blue)
+            )
+        }
     }
 }
 
