@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -51,6 +52,7 @@ import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.serialization.kotlinx.json.*
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -129,9 +131,9 @@ fun ScreenA(value: Int) {
 
 
 @Composable
-fun ApiTesting(){
-    val client = HttpClient (CIO){
-        install(ContentNegotiation){
+fun ApiTesting() {
+    val client = HttpClient(CIO) {
+        install(ContentNegotiation) {
             json(Json {
                 prettyPrint = true
                 isLenient = true
@@ -139,32 +141,49 @@ fun ApiTesting(){
             })
         }
     }
+//
+//    var users = remember {
+//        mutableListOf<IGUsers>()
+//    }
 
-    var users = remember {
-        mutableListOf<IGUsers>()
+
+    var users by remember {
+        mutableStateOf(mutableListOf<IGUsers>())
     }
     var searchText by remember {
-        mutableStateOf("miamalkova")
+        mutableStateOf("")
     }
     Column() {
-        BasicTextField(value = searchText, onValueChange = { searchText = it })
-        runBlocking {
-            //  delay(4000)
-            val response: ApiResult = client.get("https://instagram47.p.rapidapi.com/search?") {
-                header(
-                    key = "X-RapidAPI-Host",
-                    value = "instagram47.p.rapidapi.com"
-                )
-                header(
-                    key = "X-RapidAPI-Key",
-                    value = "b24b748452mshea7538628fc5d80p111264jsn14da7a60bb71"
-                )
-                parameter(key = "search", searchText)
-            }.body()
-            users = response.body?.users ?: mutableListOf()
+        BasicTextField(
+            value = searchText, onValueChange = { searchText = it }, modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .background(Color.Yellow)
+        )
+        Button(onClick = {
+            runBlocking {
+                //  delay(4000)
+                async {
+                    val response: ApiResult =
+                        client.get("https://instagram47.p.rapidapi.com/search?") {
+                            header(
+                                key = "X-RapidAPI-Host",
+                                value = "instagram47.p.rapidapi.com"
+                            )
+                            header(
+                                key = "X-RapidAPI-Key",
+                                value = "b24b748452mshea7538628fc5d80p111264jsn14da7a60bb71"
+                            )
+                            parameter(key = "search", searchText)
+                        }.body()
+                    users = response.body?.users ?: mutableListOf()
+
+                }
+            }
+        }) {
+            Text(text = "Search")
+
         }
-
-
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(30.dp),
@@ -174,6 +193,7 @@ fun ApiTesting(){
 
             items(users) {
                 // val constraintsScope = rememberCoroutineScope()
+
                 Text(
                     text = it.user?.username ?: "no name",
                     style = TextStyle(
@@ -192,6 +212,8 @@ fun ApiTesting(){
                 )
             }
         }
+
+
     }
 }
 
