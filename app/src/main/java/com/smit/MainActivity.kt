@@ -37,13 +37,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.web.WebView
+import com.google.accompanist.web.rememberWebViewState
 import com.smit.model.ApiResult
 import com.smit.model.IGUsers
 import com.smit.ui.theme.AndroidfirebaseTheme
@@ -71,7 +72,8 @@ class MainActivity : ComponentActivity() {
                 ) {
 //                    navController = rememberNavController()
 //                    NavigationGraph(navController = navController)
-                    ApiTesting()
+                    //                   ApiTesting()
+                    AddWebSite()
 
 
 
@@ -81,8 +83,13 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-class A:ViewModel(){
-
+@Composable
+fun AddWebSite(){
+    val webView = rememberWebViewState(url = "https://play.kotlinlang.org/#eyJ2ZXJzaW9uIjoiMS43LjAiLCJwbGF0Zm9ybSI6ImphdmEiLCJhcmdzIjoiIiwibm9uZU1hcmtlcnMiOnRydWUsInRoZW1lIjoiaWRlYSIsImNvZGUiOiJpbXBvcnQga290bGlueC5jb3JvdXRpbmVzLipcbmltcG9ydCBrb3RsaW4uY29yb3V0aW5lcy4qXG5pbXBvcnQga290bGlueC5jb3JvdXRpbmVzLmZsb3cuKlxuaW1wb3J0IGtvdGxpbi5yZWZsZWN0LipcbmltcG9ydCBrb3RsaW4uaW8uKlxuaW1wb3J0IGphdmEubmlvLmZpbGUuKlxuaW1wb3J0IGphdmEuaW8uKlxuIFxuXG5cbmZ1biBtYWluKCk9cnVuQmxvY2tpbmd7XG4gICAgZmxvdzxJbnQ+e1xuICAgICAgICB2YXIgc3RhcnQgPSAwXG4gICAgICAgIHdoaWxlKHN0YXJ0IDw9IDEwMDApe1xuICAgICAgICAgICAgZW1pdChzdGFydClcbiAgICAgICAgICAgIGVtaXQoc3RhcnQgKyAxKVxuICAgICAgICAgICAgc3RhcnQrK1xuICAgICAgICB9XG4gICAgICAgIFxuICAgIH0uY29sbGVjdCg6OnByaW50bG4pXG59In0=")
+    WebView(
+        state = webView,
+        onCreated = { it.settings.javaScriptEnabled = true }
+    )
 }
 
 @Composable
