@@ -70,11 +70,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    navController = rememberNavController()
+//                val    navController = rememberNavController()
 //                    NavigationGraph(navController = navController)
                     //                   ApiTesting()
-                    AddWebSite()
-
+                     AddWebSite()
+                    //AnimateApp()
 
 
                 }
@@ -239,7 +239,7 @@ fun AnimateApp() {
     val textColor = remember {
         Animatable(Color.White)
     }
-    LaunchedEffect(key1 = color) {
+    LaunchedEffect(key1 = color,key2=textColor) {
         launch {
             color.animateTo(
                 Color.White,
