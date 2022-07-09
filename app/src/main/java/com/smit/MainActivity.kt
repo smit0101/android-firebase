@@ -70,7 +70,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                val    navController = rememberNavController()
+//                    navController = rememberNavController()
 //                    NavigationGraph(navController = navController)
                     //                   ApiTesting()
                      AddWebSite()
