@@ -73,8 +73,9 @@ class MainActivity : ComponentActivity() {
 //                    navController = rememberNavController()
 //                    NavigationGraph(navController = navController)
                     //                   ApiTesting()
-                     AddWebSite()
+                     //AddWebSite()
                     //AnimateApp()
+                    ProcessMeter()
 
 
                 }
@@ -330,11 +331,24 @@ fun ProcessMeter() {
 
                 }
                 .size(100.dp)) {
-            Text(
-                text = "800",
-                style = TextStyle(Color.White, fontSize = 20.sp, fontFamily = FontFamily.Monospace)
-            )
+//            Text(
+//                text = "800",
+//                style = TextStyle(Color.White, fontSize = 20.sp, fontFamily = FontFamily.Monospace)
+//            )
+            Column(modifier = Modifier
+                .drawBehind {
+                    drawArc(
+                        brush = Brush.verticalGradient(listOf(Color.Black, Color.Red)),
+                        sweepAngle = 280f,
+                        startAngle = -90f,
+                        useCenter = false,
+                        //    size = size/1.25f,
+                        style = Stroke(width = 30f, cap = StrokeCap.Round),
+                    )
+                }
+                .size(50.dp)) {}
         }
+
         Column(modifier = Modifier
             .drawBehind {
                 drawArc(
@@ -348,6 +362,7 @@ fun ProcessMeter() {
             }
             .size(100.dp)) {}
     }
+
 }
 
 @Preview(showBackground = true)
